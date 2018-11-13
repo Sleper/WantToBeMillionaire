@@ -31,7 +31,7 @@ except ImportError:
 root = tk.Tk()
 root.title('background image')
 # pick a .gif image file you have in the working directory
-fname = "C:\\Users\\Algirdas\\Desktop\\Millionaire\\WantToBeMillionaire\\interface\\71VpHPnLOjL.png"
+fname = "C:\\Users\\salia\\OneDrive\\Desktop\\WantToBeMillionaire\\WantToBeMillionaire\\interface\\71VpHPnLOjL.png"
 bg_image = tk.PhotoImage(file=fname)
 # get the width and height of the image
 w = bg_image.width()
@@ -41,13 +41,14 @@ root.geometry("%dx%d+50+30" % (w, h))
 cv = tk.Canvas(width=w, height=h)
 cv.pack(side='top', fill='both', expand='yes')
 cv.create_image(0, 0, image=bg_image, anchor='nw')
-# add canvas text at coordinates x=15, y=20
+# add canvas text at coordinates x=500, y=400
 # anchor='nw' implies upper left corner coordinates
 cv.create_text(
-    15, 20, text="Made by:\nAlgirdas Saliamonas\nDominykas Okas\nRobertas Kivyta", fill="red", anchor='nw')
+    w-115, h-80, text="Made by:\nAlgirdas Saliamonas\nDominykas Okas\nRobertas Kivyta", fill="red", anchor='nw')
 # now add some button widgets
 btn1 = tk.Button(cv, text="Start game")
 btn1.pack(side='left', padx=10, pady=5, anchor='sw')
 btn2 = tk.Button(cv, text="Quit", command=root.destroy)
 btn2.pack(side='left', padx=10, pady=5, anchor='sw')
 root.mainloop()
+
