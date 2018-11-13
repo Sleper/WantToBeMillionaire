@@ -1,47 +1,11 @@
 import requests
 import json
+from question import Question
 
-
-parameters = {"amount": 5, "category": 10,
+parameters = {"amount": 5,
               "difficulty": "easy", "type": "multiple"}
 
 headers = {'Content-Type': 'application/json'}
-
-
-class Question:
-    def __init__(self, question="", difficulty_type="", correct_answer="", wrong_answers=[]):
-        self.question = question
-        self.difficulty_type = difficulty_type
-        self.correct_answer = correct_answer
-        self.wrong_answers = wrong_answers
-
-    def set_question(self, question):
-        self.question = question
-
-    def set_difficulty(self, difficulty):
-        self.difficulty_type = difficulty
-
-    def set_correct_answer(self, answer):
-        self.correct_answer = answer
-
-    def set_wrong_answers(self, answers):
-        for answer in answers:
-            self.correct_answer.append(answer)
-
-    def get_question(self):
-        return self.question
-
-    def get_difficulty_type(self):
-        return self.difficulty_type
-
-    def get_correct_answer(self):
-        return self.correct_answer
-
-    def get_wrong_answers(self):
-        return self.wrong_answers
-
-
-questions = []
 
 # Getting the data from the API.
 response = requests.get(
@@ -55,6 +19,7 @@ else:
     print("Something went Wrong!")
 
 
+questions = []
 # Check if data was not an empty object, if it wasn't store it into the array of objects
 if data is not None:
     print("Here is your info: ")
@@ -64,9 +29,6 @@ if data is not None:
 
 else:
     print("Data was not taken.")
-
-
-print(questions[1].get_wrong_answers())
 
 
 #secondQuestions = data["results"][2]["question"]
