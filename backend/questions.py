@@ -16,7 +16,7 @@ response = requests.get(
 if response.status_code == 200:
     data = json.loads(response.content.decode('utf-8'))
 else:
-    print("Something went Wrong!")
+    print("Couldn't connect to the server!")
 
 
 questions = []
