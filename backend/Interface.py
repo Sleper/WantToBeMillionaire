@@ -50,7 +50,7 @@ class startGame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        label = ttk.Label(self, text="Welcome", font=LARGE_FONT)
+        label = ttk.Label(self, text="Welcome!", font=LARGE_FONT)
         label.pack(pady=300, padx=590, side="top")
 
         quitButton = ttk.Button(self, text="Quit",
@@ -65,7 +65,7 @@ class startGame(tk.Frame):
 class playGame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        # Quit
+        # Quit\Leave with money won
         quitButton = ttk.Button(self, text="Quit",
                                 command=quit)
         quitButton.grid(row=0, sticky="w")
@@ -74,7 +74,7 @@ class playGame(tk.Frame):
         # Get question
         self.label = tk.Label(self, text=answer.get_question(),
                               font=LARGE_FONT, wraplength=510, justify="left")
-        self.label.grid(row=1, columnspan=2, ipady=100, ipadx=250, sticky="s")
+        self.label.grid(row=1, columnspan=2, pady=100, padx=250, sticky="s")
 
         # Get new answers
         answer.set_answers()
@@ -112,7 +112,8 @@ class playGame(tk.Frame):
         # Laikina
         self.corect_answer = 0
         self.prize()
-
+        self.money_won = "0"
+        self.money_won_save = "0"
         # Laikina
 
     def prize(self):
@@ -123,43 +124,53 @@ class playGame(tk.Frame):
         prize = ["100", "200", "300", "500", "1,000", "2,000", "4,000", "8,000",
                  "16,000", "32,000", "64,000", "125,000", "250,000", "500,000", "1,000,000"]
         count = 0
+
         number = 15
         for money in prize[::-1]:
             text = str(number) + " - " + str(money)
             if self.corect_answer == number:
+                self.money_won = money
+                if money in ["1,000", "32,000"]:
+                    self.money_won_save = money
                 tk.Label(labelsFrame, text=text, fg="red").grid(
                     row=1+count, columnspan=3, sticky="w")
             else:
-                tk.Label(labelsFrame, text=text).grid(
-                    row=1+count, columnspan=3,  sticky="w")
+                if money in ["1,000", "32,000", "1,000,000"]:
+                    tk.Label(labelsFrame, text=text, fg="blue").grid(
+                        row=1+count, columnspan=3,  sticky="w")
+                else:
+                    tk.Label(labelsFrame, text=text).grid(
+                        row=1+count, columnspan=3,  sticky="w")
             count += 1
             number -= 1
 
     def button_pressed(self, button):
-        print(button, "was pressed!")
-        print(answer.get_correct_answer())
 
         if button == answer.get_correct_answer():
             self.corect_answer += 1
             if answer.gameLength == self.corect_answer:
-                print("You won")
+                self.prize()
+                if messagebox.askyesno(
+                        "You won!", "Congratulations!\nYou won 1,000,000!") == True:
+                    python = sys.executable
+                    os.execl(python, python, * sys.argv)
+                else:
+                    self.quit()
             else:
-                print("GJ")
                 answer.set_answers()
                 ans = answer.randomAnswers()
                 q = answer.get_question()
                 self.change_buttons_value(ans, q)
                 self.prize()
+        elif button in [5, 6, 7]:
+            messagebox.showinfo("Help", "Not implemented yet.")
         else:
-            print("Wrong ans")
             if messagebox.askyesno(
-                    "Game over", "You won = xx. Do you wanna try again?") == True:
-                print("Yes")
+                    "Game over", "Game is over. You won " + self.money_won_save + ".\nDo you wanna try again?") == True:
                 python = sys.executable
                 os.execl(python, python, * sys.argv)
             else:
-                print("Bye")
-                quit
+                self.quit()
 
     def change_buttons_value(self, ans, question):
         self.label["text"] = question

@@ -1,5 +1,6 @@
 from questions import questions
 from random import randint
+import html
 
 
 class Answers:
@@ -13,7 +14,7 @@ class Answers:
     def set_answers(self):
         self.answers = []
         for answer in questions[self.counter].get_wrong_answers():
-            self.answers.append(answer)
+            self.answers.append(html.unescape(answer))
         self.answers.append(questions[self.counter].get_correct_answer())
         self.set_question()
         self.set_correct_answer()

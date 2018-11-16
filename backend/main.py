@@ -1,5 +1,5 @@
 # from questions import questions
-from Interface_2 import *
+from Interface import *
 
 
 root = game_window()
