@@ -109,12 +109,10 @@ class playGame(tk.Frame):
                                         command=lambda: self.button_pressed(7))
         helpPhone_a_Friend.grid(row=0, column=5)
 
-        # Laikina
         self.corect_answer = 0
         self.prize()
         self.money_won = "0"
         self.money_won_save = "0"
-        # Laikina
 
     def prize(self):
         # Money won

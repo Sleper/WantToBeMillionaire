@@ -13,12 +13,7 @@ class Answers:
 
     def set_answers(self):
         self.answers = []
-        for answer in questions[self.counter].get_wrong_answers():
-            self.answers.append(html.unescape(answer))
-        self.answers.append(questions[self.counter].get_correct_answer())
-        self.set_question()
-        self.set_correct_answer()
-        self.set_counter(1)
+        self.get_data()
 
     def set_counter(self, num):
         self.counter += num
@@ -61,6 +56,14 @@ class Answers:
                 counter += 1
                 truths[3] = False
         return newAnswers
+
+    def get_data(self):
+        for answer in questions[self.counter].get_wrong_answers():
+            self.answers.append(html.unescape(answer))
+        self.answers.append(questions[self.counter].get_correct_answer())
+        self.set_question()
+        self.set_correct_answer()
+        self.set_counter(1)
 
 
 # answer = Answers()
