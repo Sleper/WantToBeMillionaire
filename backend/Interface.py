@@ -24,7 +24,6 @@ class game_window(tk.Tk):
 
         container = tk.Frame(self)
         container.grid(row=0, columnspan=2, sticky="nsew")
-        # container.pack(side="top", fill="both", expand = True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
@@ -37,7 +36,7 @@ class game_window(tk.Tk):
 
             frame.grid(row=0, column=0, sticky="nsew")
 
-        # Visada startuoja pirmas
+        # First window to start
         self.show_frame(startGame)
 
     def show_frame(self, cont):
@@ -51,7 +50,7 @@ class startGame(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         label = ttk.Label(self, text="Welcome!", font=LARGE_FONT)
-        label.pack(pady=300, padx=590, side="top")
+        label.pack(pady=300)
 
         quitButton = ttk.Button(self, text="Quit",
                                 command=quit)
@@ -67,19 +66,18 @@ class playGame(tk.Frame):
         tk.Frame.__init__(self, parent)
         # Quit\Leave with money won
         quitButton = ttk.Button(self, text="Quit",
-                                command=quit)
+                                command=lambda: self.button_pressed("q"))
         quitButton.grid(row=0, sticky="w")
 
-        # Klausimas
-        # Get question
+        # Question
         self.label = tk.Label(self, text=answer.get_question(),
-                              font=LARGE_FONT, wraplength=510, justify="left")
-        self.label.grid(row=1, columnspan=2, pady=100, padx=250, sticky="s")
+                              font=LARGE_FONT, wraplength=750, justify="center", width=90, height=30)
+        self.label.grid(row=1, columnspan=2, pady=10, padx=53)
 
         # Get new answers
         answer.set_answers()
         ans = answer.randomAnswers()
-        # Atsakymo variantai
+        # Getting answers value on the buttons
         self.button1 = ttk.Button(self, text="A - " + ans[0],
                                   command=lambda: self.button_pressed(ans[0]))
         self.button1.grid(row=2, column=0, sticky="we", pady=10, padx=5)
@@ -143,8 +141,10 @@ class playGame(tk.Frame):
             number -= 1
 
     def button_pressed(self, button):
-
-        if button == answer.get_correct_answer():
+        if button == "q":
+            if messagebox.showinfo("Thanks for playing", "You won " + self.money_won + ".\nSee you soon.") == "ok":
+                self.quit()
+        elif button == answer.get_correct_answer():
             self.corect_answer += 1
             if answer.gameLength == self.corect_answer:
                 self.prize()
