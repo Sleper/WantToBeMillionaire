@@ -1,7 +1,7 @@
 import tkinter
 
 
-class Counter:  
+class Counter:
     def __init__(self, sec, timeLabel, master):
         self.sec = sec
         self.timeLabel = timeLabel
@@ -28,8 +28,11 @@ class Counter:
     def resume(self):
         self.doTick = True
         self.tick()
-    
-    def reset(self,sec):
+
+    def reset(self, sec):
         self.doTick = True
         self.sec = sec
         self.timeLabel.configure(text=self.sec)
+
+    def addTime(self, sec):
+        self.sec += sec

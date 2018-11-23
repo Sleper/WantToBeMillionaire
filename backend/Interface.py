@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from answers import Answers
 from Counter import Counter
+from help import Help
 
 import sys
 import os
@@ -10,6 +11,7 @@ import os
 
 answer = Answers()
 largeFont = ("Verdana", 12)
+
 
 class GameWindow(tk.Tk):
     # args - any number of arguments
@@ -40,7 +42,8 @@ class StartGame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        label = ttk.Label(self, text="Welcome!", font=largeFont, width=120, anchor="center")
+        label = ttk.Label(self, text="Welcome!",
+                          font=largeFont, width=120, anchor="center")
         label.grid(row=0, column=0, sticky="we", pady=300, padx=5)
 
         quitButton = ttk.Button(self, text="Quit",
@@ -57,11 +60,12 @@ class PlayGame(tk.Frame):
         tk.Frame.__init__(self, parent)
         # Quit\Leave with money won
         self.quitButton = ttk.Button(self, text="Quit",
-                                command=lambda: self.buttonPressed("q"))
+                                     command=lambda: self.buttonPressed("q"))
         self.quitButton.grid(row=0, sticky="w")
 
         # Counter
-        self.timeLabel = tk.Label(self, text="", justify="left", font=largeFont)
+        self.timeLabel = tk.Label(
+            self, text="", justify="left", font=largeFont)
         self.timeLabel.grid(row=1, columnspan=2)
         self.counter = Counter(30, self.timeLabel, self)
 
@@ -91,17 +95,21 @@ class PlayGame(tk.Frame):
         self.button4.grid(row=4, column=1, sticky="we", pady=10, padx=5)
 
         # Help
-        helpAskTheAudience = ttk.Button(self, text="Ask the Audience",
-                                          command=lambda: self.buttonPressed(5))
-        helpAskTheAudience.grid(row=0, column=3)
 
-        help50_50 = ttk.Button(self, text="50:50",
-                               command=lambda: self.buttonPressed(6))
-        help50_50.grid(row=0, column=4)
+        self.gameHelp = Help(self.button1, self.button2, self.button3,
+                             self.button4, answer)
 
-        helpPhoneAFriend = ttk.Button(self, text="Phone a Friend",
+        self.helpAskTheAudience = ttk.Button(self, text="Ask the Audience",
+                                             command=lambda: self.buttonPressed(5))
+        self.helpAskTheAudience.grid(row=0, column=3)
+
+        self.help50_50 = ttk.Button(self, text="50:50",
+                                    command=lambda: self.buttonPressed(6))
+        self.help50_50.grid(row=0, column=4)
+
+        self.helpExtraTime = ttk.Button(self, text="Extra Time",
                                         command=lambda: self.buttonPressed(7))
-        helpPhoneAFriend.grid(row=0, column=5)
+        self.helpExtraTime.grid(row=0, column=5)
 
         self.corectAnswer = 0
         self.prize()
@@ -153,21 +161,30 @@ class PlayGame(tk.Frame):
                 else:
                     self.quit()
             else:
+
                 answer.set_answers()
                 ans = answer.randomAnswers()
                 q = answer.get_question()
                 self.changeButtonsValue(ans, q)
                 self.prize()
-                if self.corectAnswer in (1 ,2 , 3, 4):
+                if self.corectAnswer in (1, 2, 3, 4):
                     self.counter.reset(30)
-                elif self.corectAnswer in (5 ,6 , 7, 8, 9):
+                elif self.corectAnswer in (5, 6, 7, 8, 9):
                     self.counter.reset(45)
                 else:
                     self.counter.reset(60)
-        elif button in [5, 6, 7]:
+        elif button == 7:
+            self.counter.addTime(60)
+            self.helpExtraTime['state'] = "disable"
+        elif button == 5:
             self.counter.stop()
-            if messagebox.showinfo("Help", "Not implemented yet.") == "ok":
+
+            if messagebox.showinfo("Ask Audience", self.gameHelp.ask_audience()) == "ok":
                 self.counter.resume()
+            self.helpAskTheAudience['state'] = "disable"
+        elif button == 6:
+            self.gameHelp.fifty_fifty()
+            self.help50_50['state'] = "disabled"
         else:
             if messagebox.askyesno(
                     "Game over", "Game is over. You won " + self.moneyWonSave + ".\nDo you wanna try again?") == True:
@@ -180,12 +197,16 @@ class PlayGame(tk.Frame):
         self.label["text"] = question
         self.button1["text"] = "A - " + ans[0]
         self.button1["command"] = lambda: self.buttonPressed(ans[0])
+        self.button1["state"] = "active"
         self.button2["text"] = "B - " + ans[1]
         self.button2["command"] = lambda: self.buttonPressed(ans[1])
+        self.button2["state"] = "active"
         self.button3["text"] = "C - " + ans[2]
         self.button3["command"] = lambda: self.buttonPressed(ans[2])
+        self.button3["state"] = "active"
         self.button4["text"] = "D - " + ans[3]
         self.button4["command"] = lambda: self.buttonPressed(ans[3])
+        self.button4["state"] = "active"
 
     def gameOver(self):
         if self.counter.sec == 0:
