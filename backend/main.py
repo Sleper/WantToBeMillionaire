@@ -1,8 +1,9 @@
 # from questions import questions
 from Interface import *
+import inspect
 
 
-root = game_window()
+root = GameWindow()
 
 width_of_window = 1280
 height_of_window = 720

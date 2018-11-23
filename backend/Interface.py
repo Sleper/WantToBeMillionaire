@@ -9,12 +9,9 @@ import os
 
 
 answer = Answers()
+largeFont = ("Verdana", 12)
 
-LARGE_FONT = ("Verdana", 12)
-small_font = ("Verdana", 8)
-
-
-class game_window(tk.Tk):
+class GameWindow(tk.Tk):
     # args - any number of arguments
     # kwargs - any number of key word arguments
     def __init__(self, *args, **kwargs):
@@ -23,62 +20,54 @@ class game_window(tk.Tk):
 
         tk.Tk.wm_title(self, "Who wants to be a millionare")
 
-        container = tk.Frame(self)
-        container.grid(row=0, columnspan=2, sticky="nsew")
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        self.container = tk.Frame(self)
+        self.container.grid(row=0, columnspan=2, sticky="nsew")
+        self.container.grid_rowconfigure(0, weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
 
-        self.frames = {}
+        frame = StartGame(self.container, self)
+        frame.grid(row=0, column=0, sticky="nsew")
+        frame.tkraise()
 
-        for F in (startGame, playGame):
-            frame = F(container, self)
-
-            self.frames[F] = frame
-
-            frame.grid(row=0, column=0, sticky="nsew")
-
-        # First window to start
-        self.show_frame(startGame)
-
-    def show_frame(self, cont):
-        frame = self.frames[cont]
+    def startNewGame(self):
+        frame = PlayGame(self.container, self)
+        frame.grid(row=0, column=0, sticky="nsew")
         frame.tkraise()
 
 
-class startGame(tk.Frame):
+class StartGame(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        label = ttk.Label(self, text="Welcome!", font=LARGE_FONT)
-        label.pack(pady=300)
+        label = ttk.Label(self, text="Welcome!", font=largeFont, width=120, anchor="center")
+        label.grid(row=0, column=0, sticky="we", pady=300, padx=5)
 
         quitButton = ttk.Button(self, text="Quit",
                                 command=quit)
-        quitButton.pack(pady=5, side="bottom")
+        quitButton.grid(row=2, pady=10, padx=5)
 
         startButton = ttk.Button(self, text="Start game",
-                                 command=lambda: controller.show_frame(playGame))
-        startButton.pack(pady=5, side="bottom")
+                                 command=controller.startNewGame)
+        startButton.grid(row=1, pady=10, padx=5)
 
 
-class playGame(tk.Frame):
+class PlayGame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         # Quit\Leave with money won
-        quitButton = ttk.Button(self, text="Quit",
-                                command=lambda: self.button_pressed("q"))
-        quitButton.grid(row=0, sticky="w")
+        self.quitButton = ttk.Button(self, text="Quit",
+                                command=lambda: self.buttonPressed("q"))
+        self.quitButton.grid(row=0, sticky="w")
 
         # Counter
-        self.timeLabel = tk.Label(self, text="", justify="left", font=LARGE_FONT)
+        self.timeLabel = tk.Label(self, text="", justify="left", font=largeFont)
         self.timeLabel.grid(row=1, columnspan=2)
-
-        self.counter = Counter(-1, self.timeLabel, self)
+        self.counter = Counter(30, self.timeLabel, self)
 
         # Question
         self.label = tk.Label(self, text=answer.get_question(),
-                              font=LARGE_FONT, wraplength=750, justify="center", width=90, height=30)
+                              font=largeFont, wraplength=750, justify="center", width=90, height=30)
         self.label.grid(row=2, columnspan=2, pady=10, padx=53)
 
         # Get new answers
@@ -86,40 +75,40 @@ class playGame(tk.Frame):
         ans = answer.randomAnswers()
         # Getting answers value on the buttons
         self.button1 = ttk.Button(self, text="A - " + ans[0],
-                                  command=lambda: self.button_pressed(ans[0]))
+                                  command=lambda: self.buttonPressed(ans[0]))
         self.button1.grid(row=3, column=0, sticky="we", pady=10, padx=5)
 
         self.button2 = ttk.Button(self, text="B - " + ans[1],
-                                  command=lambda: self.button_pressed(ans[1]))
+                                  command=lambda: self.buttonPressed(ans[1]))
         self.button2.grid(row=3, column=1, sticky="we", pady=10, padx=5)
 
         self.button3 = ttk.Button(self, text="C - " + ans[2],
-                                  command=lambda: self.button_pressed(ans[2]))
+                                  command=lambda: self.buttonPressed(ans[2]))
         self.button3.grid(row=4, column=0, sticky="we", pady=10, padx=5)
 
         self.button4 = ttk.Button(self, text="D - " + ans[3],
-                                  command=lambda: self.button_pressed(ans[3]))
+                                  command=lambda: self.buttonPressed(ans[3]))
         self.button4.grid(row=4, column=1, sticky="we", pady=10, padx=5)
 
         # Help
-        helpAsk_the_Audience = ttk.Button(self, text="Ask the Audience",
-                                          command=lambda: self.button_pressed(5))
-        helpAsk_the_Audience.grid(row=0, column=3)
+        helpAskTheAudience = ttk.Button(self, text="Ask the Audience",
+                                          command=lambda: self.buttonPressed(5))
+        helpAskTheAudience.grid(row=0, column=3)
 
         help50_50 = ttk.Button(self, text="50:50",
-                               command=lambda: self.button_pressed(6))
+                               command=lambda: self.buttonPressed(6))
         help50_50.grid(row=0, column=4)
 
-        helpPhone_a_Friend = ttk.Button(self, text="Phone a Friend",
-                                        command=lambda: self.button_pressed(7))
-        helpPhone_a_Friend.grid(row=0, column=5)
+        helpPhoneAFriend = ttk.Button(self, text="Phone a Friend",
+                                        command=lambda: self.buttonPressed(7))
+        helpPhoneAFriend.grid(row=0, column=5)
 
-        self.corect_answer = 0
+        self.corectAnswer = 0
         self.prize()
-        self.money_won = "0"
-        self.money_won_save = "0"
+        self.moneyWon = "0"
+        self.moneyWonSave = "0"
 
-        self.game_over()
+        self.gameOver()
 
     def prize(self):
         # Money won
@@ -133,10 +122,10 @@ class playGame(tk.Frame):
         number = 15
         for money in prize[::-1]:
             text = str(number) + " - " + str(money)
-            if self.corect_answer == number:
-                self.money_won = money
+            if self.corectAnswer == number:
+                self.moneyWon = money
                 if money in ["1,000", "32,000"]:
-                    self.money_won_save = money
+                    self.moneyWonSave = money
                 tk.Label(labelsFrame, text=text, fg="red").grid(
                     row=1+count, columnspan=3, sticky="w")
             else:
@@ -149,13 +138,13 @@ class playGame(tk.Frame):
             count += 1
             number -= 1
 
-    def button_pressed(self, button):
+    def buttonPressed(self, button):
         if button == "q":
-            if messagebox.showinfo("Thanks for playing", "You won " + self.money_won + ".\nSee you soon.") == "ok":
+            if messagebox.showinfo("Thanks for playing", "You won " + self.moneyWon + ".\nSee you soon.") == "ok":
                 self.quit()
         elif button == answer.get_correct_answer():
-            self.corect_answer += 1
-            if answer.gameLength == self.corect_answer:
+            self.corectAnswer += 1
+            if answer.gameLength == self.corectAnswer:
                 self.prize()
                 if messagebox.askyesno(
                         "You won!", "Congratulations!\nYou won 1,000,000!") == True:
@@ -167,50 +156,43 @@ class playGame(tk.Frame):
                 answer.set_answers()
                 ans = answer.randomAnswers()
                 q = answer.get_question()
-                self.change_buttons_value(ans, q)
+                self.changeButtonsValue(ans, q)
                 self.prize()
-                if self.corect_answer in (1 ,2 , 3, 4):
-                    self.counter.reset(31)
-                elif self.corect_answer in (5 ,6 , 7, 8, 9):
-                    self.counter.reset(46)
+                if self.corectAnswer in (1 ,2 , 3, 4):
+                    self.counter.reset(30)
+                elif self.corectAnswer in (5 ,6 , 7, 8, 9):
+                    self.counter.reset(45)
                 else:
-                    self.counter.reset(61)
+                    self.counter.reset(60)
         elif button in [5, 6, 7]:
             self.counter.stop()
             if messagebox.showinfo("Help", "Not implemented yet.") == "ok":
                 self.counter.resume()
         else:
             if messagebox.askyesno(
-                    "Game over", "Game is over. You won " + self.money_won_save + ".\nDo you wanna try again?") == True:
+                    "Game over", "Game is over. You won " + self.moneyWonSave + ".\nDo you wanna try again?") == True:
                 python = sys.executable
                 os.execl(python, python, * sys.argv)
             else:
                 self.quit()
 
-    def change_buttons_value(self, ans, question):
+    def changeButtonsValue(self, ans, question):
         self.label["text"] = question
         self.button1["text"] = "A - " + ans[0]
-        self.button1["command"] = lambda: self.button_pressed(ans[0])
+        self.button1["command"] = lambda: self.buttonPressed(ans[0])
         self.button2["text"] = "B - " + ans[1]
-        self.button2["command"] = lambda: self.button_pressed(ans[1])
+        self.button2["command"] = lambda: self.buttonPressed(ans[1])
         self.button3["text"] = "C - " + ans[2]
-        self.button3["command"] = lambda: self.button_pressed(ans[2])
+        self.button3["command"] = lambda: self.buttonPressed(ans[2])
         self.button4["text"] = "D - " + ans[3]
-        self.button4["command"] = lambda: self.button_pressed(ans[3])
+        self.button4["command"] = lambda: self.buttonPressed(ans[3])
 
-    def game_over(self):
+    def gameOver(self):
         if self.counter.sec == 0:
             if messagebox.askyesno(
-                    "Game over", "Game is over. You won " + self.money_won + ".\nDo you wanna try again?") == True:
+                    "Game over", "Game is over. You won " + self.moneyWon + ".\nDo you wanna try again?") == True:
                 python = sys.executable
                 os.execl(python, python, * sys.argv)
             else:
                 self.quit()
-        self.after(1000, self.game_over)
-
-    # def sart_counter(self):
-    #     global counter
-    #     if counter == True:
-    #         self.counter.reset(30)
-    #         counter = False
-    #     self.after(1000, self.sart_counter)
+        self.after(1000, self.gameOver)

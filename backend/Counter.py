@@ -5,7 +5,7 @@ class Counter:
     def __init__(self, sec, timeLabel, master):
         self.sec = sec
         self.timeLabel = timeLabel
-        self.doTick = False
+        self.doTick = True
         self.master = master
         self.tick()
 
