@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from answers import Answers
+from Counter import Counter
 
 import sys
 import os
@@ -69,10 +70,16 @@ class playGame(tk.Frame):
                                 command=lambda: self.button_pressed("q"))
         quitButton.grid(row=0, sticky="w")
 
+        # Counter
+        self.timeLabel = tk.Label(self, text="", justify="left", font=LARGE_FONT)
+        self.timeLabel.grid(row=1, columnspan=2)
+
+        self.counter = Counter(-1, self.timeLabel, self)
+
         # Question
         self.label = tk.Label(self, text=answer.get_question(),
                               font=LARGE_FONT, wraplength=750, justify="center", width=90, height=30)
-        self.label.grid(row=1, columnspan=2, pady=10, padx=53)
+        self.label.grid(row=2, columnspan=2, pady=10, padx=53)
 
         # Get new answers
         answer.set_answers()
@@ -80,19 +87,19 @@ class playGame(tk.Frame):
         # Getting answers value on the buttons
         self.button1 = ttk.Button(self, text="A - " + ans[0],
                                   command=lambda: self.button_pressed(ans[0]))
-        self.button1.grid(row=2, column=0, sticky="we", pady=10, padx=5)
+        self.button1.grid(row=3, column=0, sticky="we", pady=10, padx=5)
 
         self.button2 = ttk.Button(self, text="B - " + ans[1],
                                   command=lambda: self.button_pressed(ans[1]))
-        self.button2.grid(row=2, column=1, sticky="we", pady=10, padx=5)
+        self.button2.grid(row=3, column=1, sticky="we", pady=10, padx=5)
 
         self.button3 = ttk.Button(self, text="C - " + ans[2],
                                   command=lambda: self.button_pressed(ans[2]))
-        self.button3.grid(row=3, column=0, sticky="we", pady=10, padx=5)
+        self.button3.grid(row=4, column=0, sticky="we", pady=10, padx=5)
 
         self.button4 = ttk.Button(self, text="D - " + ans[3],
                                   command=lambda: self.button_pressed(ans[3]))
-        self.button4.grid(row=3, column=1, sticky="we", pady=10, padx=5)
+        self.button4.grid(row=4, column=1, sticky="we", pady=10, padx=5)
 
         # Help
         helpAsk_the_Audience = ttk.Button(self, text="Ask the Audience",
@@ -111,6 +118,8 @@ class playGame(tk.Frame):
         self.prize()
         self.money_won = "0"
         self.money_won_save = "0"
+
+        self.game_over()
 
     def prize(self):
         # Money won
@@ -160,8 +169,16 @@ class playGame(tk.Frame):
                 q = answer.get_question()
                 self.change_buttons_value(ans, q)
                 self.prize()
+                if self.corect_answer in (1 ,2 , 3, 4):
+                    self.counter.reset(31)
+                elif self.corect_answer in (5 ,6 , 7, 8, 9):
+                    self.counter.reset(46)
+                else:
+                    self.counter.reset(61)
         elif button in [5, 6, 7]:
-            messagebox.showinfo("Help", "Not implemented yet.")
+            self.counter.stop()
+            if messagebox.showinfo("Help", "Not implemented yet.") == "ok":
+                self.counter.resume()
         else:
             if messagebox.askyesno(
                     "Game over", "Game is over. You won " + self.money_won_save + ".\nDo you wanna try again?") == True:
@@ -180,3 +197,20 @@ class playGame(tk.Frame):
         self.button3["command"] = lambda: self.button_pressed(ans[2])
         self.button4["text"] = "D - " + ans[3]
         self.button4["command"] = lambda: self.button_pressed(ans[3])
+
+    def game_over(self):
+        if self.counter.sec == 0:
+            if messagebox.askyesno(
+                    "Game over", "Game is over. You won " + self.money_won + ".\nDo you wanna try again?") == True:
+                python = sys.executable
+                os.execl(python, python, * sys.argv)
+            else:
+                self.quit()
+        self.after(1000, self.game_over)
+
+    # def sart_counter(self):
+    #     global counter
+    #     if counter == True:
+    #         self.counter.reset(30)
+    #         counter = False
+    #     self.after(1000, self.sart_counter)
