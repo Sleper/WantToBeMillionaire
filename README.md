@@ -28,3 +28,9 @@ In Terminal run 'cd backend' and then 'python -B main.py'.
 Interface will pop up press Start. You have 3 help functions to win,
 
 Win a million.
+
+
+## Authors
+* **Algis Saliamonas**
+* **Robertas Kivyta**
+* **Dominykas Okas**
